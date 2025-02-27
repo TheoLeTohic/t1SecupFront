@@ -1,12 +1,16 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useState, useLayoutEffect, useRef } from "react";
 import { useDarkMode } from "../context/DarkModeContext";
+import { useNavigate } from "react-router-dom";
+import { login } from "../api/api";
 import gsap from "gsap";
 import Button from "../components/Button";
-import { useNavigate } from "react-router-dom";
 
 function Login() {
   const { darkMode, setDarkMode } = useDarkMode();
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
   const titleRef = useRef(null);
   const gsapContext = useRef(null);
 
@@ -23,6 +27,22 @@ function Login() {
     return () => gsapContext.current.revert();
   }, []);
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError(null);
+    try {
+      const response = await login(email, password);
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+        navigate("/todo-app");
+      } else {
+        setError(response.message || "Erreur lors de la connexion");
+      }
+    } catch (err) {
+      setError("Erreur serveur, veuillez réessayer plus tard.");
+    }
+  };
+
   return (
     <div
       style={{
@@ -34,70 +54,34 @@ function Login() {
         textAlign: "center",
         backgroundColor: darkMode ? "#fff" : "#000",
         color: darkMode ? "#000" : "#fff",
-        position: "relative",
       }}
     >
       <div style={{ position: "absolute", top: 20, left: 20 }}>
-        <Button
-          text={darkMode ? "🌞" : "🌙"}
-          onClick={() => setDarkMode((prev) => !prev)}
-        />
-      </div>
-      <div style={{ position: "absolute", top: 20, right: 20 }}>
-        <Button text="Accueil" onClick={() => navigate("/")} />
+        <Button text={darkMode ? "🌞" : "🌙"} onClick={() => setDarkMode((prev) => !prev)} />
       </div>
       <h1 ref={titleRef}>Connexion</h1>
-      <form
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <input
           type="text"
           placeholder="Email"
-          style={{
-            marginTop: "10px",
-            marginBottom: "10px",
-            padding: "10px",
-            width: "250px",
-            borderRadius: "10px",
-            border: "1px solid #ccc",
-            backgroundColor: darkMode ? "#ddd" : "#222",
-            color: darkMode ? "#000" : "#fff",
-          }}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{ margin: "10px", padding: "10px", width: "250px" }}
         />
         <input
           type="password"
           placeholder="Mot de passe"
-          style={{
-            marginBottom: "10px",
-            padding: "10px",
-            width: "250px",
-            borderRadius: "10px",
-            border: "1px solid #ccc",
-            backgroundColor: darkMode ? "#ddd" : "#222",
-            color: darkMode ? "#000" : "#fff",
-          }}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ margin: "10px", padding: "10px", width: "250px" }}
         />
-        <br />
-        <Button text="Se connecter" onClick={() => navigate("/todo-app")} />
+        <Button text="Se connecter" type="submit" />
       </form>
-      <p style={{ marginTop: "20px" }}>
-        Vous n'avez pas de compte ?{" "}
-        <a
-          href="/register"
-          style={{
-            color: darkMode ? "#000" : "#fff",
-            textDecoration: "underline",
-          }}
-        >
-          S'inscrire
-        </a>
+      <p>
+        Pas encore inscrit ? <a href="/register">S'inscrire</a>
       </p>
     </div>
   );
 }
-
 export default Login;

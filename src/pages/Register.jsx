@@ -1,12 +1,16 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useState, useLayoutEffect, useRef } from "react";
 import { useDarkMode } from "../context/DarkModeContext";
+import { useNavigate } from "react-router-dom";
+import { register } from "../api/api";
 import gsap from "gsap";
 import Button from "../components/Button";
-import { useNavigate } from "react-router-dom";
 
 function Register() {
   const { darkMode, setDarkMode } = useDarkMode();
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
   const titleRef = useRef(null);
   const gsapContext = useRef(null);
 
@@ -23,6 +27,22 @@ function Register() {
     return () => gsapContext.current.revert();
   }, []);
 
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError(null);
+    try {
+      const response = await register(username, password);
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+        navigate("/todo-app");
+      } else {
+        setError(response.message || "Erreur lors de l'inscription");
+      }
+    } catch (err) {
+      setError("Erreur serveur, veuillez réessayer plus tard.");
+    }
+  };
+
   return (
     <div
       style={{
@@ -34,80 +54,32 @@ function Register() {
         textAlign: "center",
         backgroundColor: darkMode ? "#fff" : "#000",
         color: darkMode ? "#000" : "#fff",
-        position: "relative",
       }}
     >
       <div style={{ position: "absolute", top: 20, left: 20 }}>
-        <Button
-          text={darkMode ? "🌞" : "🌙"}
-          onClick={() => setDarkMode((prev) => !prev)}
-        />
-      </div>
-      <div style={{ position: "absolute", top: 20, right: 20 }}>
-        <Button text="Accueil" onClick={() => navigate("/")} />
+        <Button text={darkMode ? "🌞" : "🌙"} onClick={() => setDarkMode((prev) => !prev)} />
       </div>
       <h1 ref={titleRef}>Inscription</h1>
-      <form
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleRegister} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <input
           type="text"
-          placeholder="Nom"
-          style={{
-            marginTop: "10px",
-            marginBottom: "10px",
-            padding: "10px",
-            width: "250px",
-            borderRadius: "10px",
-            border: "1px solid #ccc",
-            backgroundColor: darkMode ? "#ddd" : "#222",
-            color: darkMode ? "#000" : "#fff",
-          }}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          style={{
-            marginBottom: "10px",
-            padding: "10px",
-            width: "250px",
-            borderRadius: "10px",
-            border: "1px solid #ccc",
-            backgroundColor: darkMode ? "#ddd" : "#222",
-            color: darkMode ? "#000" : "#fff",
-          }}
+          placeholder="Nom d'utilisateur"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          style={{ margin: "10px", padding: "10px", width: "250px" }}
         />
         <input
           type="password"
           placeholder="Mot de passe"
-          style={{
-            marginBottom: "10px",
-            padding: "10px",
-            width: "250px",
-            borderRadius: "10px",
-            border: "1px solid #ccc",
-            backgroundColor: darkMode ? "#ddd" : "#222",
-            color: darkMode ? "#000" : "#fff",
-          }}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ margin: "10px", padding: "10px", width: "250px" }}
         />
-        <br />
-        <Button text="S'inscrire" onClick={() => navigate("/todo-app")} />
+        <Button text="S'inscrire" type="submit" />
       </form>
-      <p style={{ marginTop: "20px" }}>
-        Déjà un compte ?{" "}
-        <a
-          href="/login"
-          style={{
-            color: darkMode ? "#000" : "#fff",
-            textDecoration: "underline",
-          }}
-        >
-          Se connecter
-        </a>
+      <p>
+        Déjà inscrit ? <a href="/login">Se connecter</a>
       </p>
     </div>
   );
