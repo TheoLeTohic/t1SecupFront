@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { register } from "../api/api";
 import gsap from "gsap";
 import Button from "../components/Button";
-import Cookies from "js-cookie";
 
 function Register() {
   const { darkMode, setDarkMode } = useDarkMode();
