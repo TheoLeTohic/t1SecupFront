@@ -5,6 +5,7 @@ import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import TodoApp from "./pages/TodoApp.jsx";
+import PrivateRoute from "./components/PrivateRoute.jsx";
 
 function App() {
   return (
@@ -14,7 +15,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/todo-app" element={<TodoApp />} />
+
+          <Route element={<PrivateRoute />}>
+            <Route path="/todo-app" element={<TodoApp />} />
+          </Route>
         </Routes>
       </Router>
     </DarkModeProvider>

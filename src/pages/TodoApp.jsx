@@ -11,6 +11,11 @@ function TodoApp() {
   const listRef = useRef(null);
   const gsapContext = useRef(null);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   useLayoutEffect(() => {
     gsapContext.current = gsap.context(() => {
       gsap.set(titleRef.current, { opacity: 0 });
@@ -52,7 +57,7 @@ function TodoApp() {
         />
       </div>
       <div style={{ position: "absolute", top: 20, right: 20 }}>
-        <Button text="Accueil" onClick={() => navigate("/")} />
+      <Button text="Se Déconnecter" onClick={handleLogout} />
       </div>
       <h1 ref={titleRef}>Ma To-Do List</h1>
       <ul ref={listRef} style={{ listStyle: "none", padding: 0 }}>
