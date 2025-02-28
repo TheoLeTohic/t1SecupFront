@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import Button from "../components/Button";
 import { getTodos, createTodo, updateTodo, deleteTodo } from "../api/api";
+import Cookies from "js-cookie";
 
 function TodoApp() {
   const { darkMode, setDarkMode } = useDarkMode();
@@ -14,9 +15,12 @@ function TodoApp() {
   const listRef = useRef(null);
   const gsapContext = useRef(null);
 
-  const token = localStorage.getItem("token");
-
   const refreshTodos = async () => {
+    const token = Cookies.get("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     try {
       const response = await getTodos(token);
       if (response && Array.isArray(response)) {
@@ -32,7 +36,8 @@ function TodoApp() {
   }, []);
 
   const handleAddTodo = async () => {
-    if (newTodo.trim() === "") return;
+    const token = Cookies.get("token");
+    if (!token || newTodo.trim() === "") return;
     try {
       await createTodo(token, newTodo);
       setNewTodo("");
@@ -43,10 +48,11 @@ function TodoApp() {
   };
 
   const handleToggleComplete = async (id, completed) => {
-    try {
-      const todo = todos.find((t) => t.id === id || t._id === id);
-      if (!todo) return;
+    const token = Cookies.get("token");
+    const todo = todos.find((t) => t.id === id || t._id === id);
+    if (!todo || !token) return;
 
+    try {
       await updateTodo(token, id, todo.title, !completed);
       refreshTodos();
     } catch (error) {
@@ -55,6 +61,9 @@ function TodoApp() {
   };
 
   const handleDeleteTodo = async (id) => {
+    const token = Cookies.get("token");
+    if (!token) return;
+
     try {
       await deleteTodo(token, id);
       refreshTodos();
@@ -112,7 +121,7 @@ function TodoApp() {
         <Button
           text="Se déconnecter"
           onClick={() => {
-            localStorage.removeItem("token");
+            Cookies.remove("token");
             navigate("/login");
           }}
         />

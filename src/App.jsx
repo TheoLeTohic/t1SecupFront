@@ -15,10 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
-          <Route element={<PrivateRoute />}>
-            <Route path="/todo-app" element={<TodoApp />} />
-          </Route>
+          <Route path="/todo-app" element={<PrivateRoute element={<TodoApp />} />} />
         </Routes>
       </Router>
     </DarkModeProvider>

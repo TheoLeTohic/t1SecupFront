@@ -1,14 +1,22 @@
+import Cookies from "js-cookie";
 const API_URL = "https://my-todo-backend-31f944975365.herokuapp.com/api";
 
 export const register = async (username, password) => {
-
   const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ username, password }),
   });
 
   const data = await response.json();
+  if (data.data) {
+    Cookies.set("token", data.data, {
+      expires: 7,
+      secure: true,
+      sameSite: "Strict",
+    });
+  }
   return data;
 };
 
@@ -16,9 +24,19 @@ export const login = async (username, password) => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ username, password }),
   });
-  return response.json();
+
+  const data = await response.json();
+  if (data.token) {
+    Cookies.set("token", data.token, {
+      expires: 7,
+      secure: true,
+      sameSite: "Strict",
+    });
+  }
+  return data;
 };
 
 export const getTodos = async (token) => {

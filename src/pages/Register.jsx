@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { register } from "../api/api";
 import gsap from "gsap";
 import Button from "../components/Button";
+import Cookies from "js-cookie";
 
 function Register() {
   const { darkMode, setDarkMode } = useDarkMode();
@@ -32,8 +33,9 @@ function Register() {
     setError(null);
     try {
       const response = await register(username, password);
+      console.log("Réponse après register:", response);
+
       if (response.data) {
-        localStorage.setItem("token", response.data);
         navigate("/todo-app");
       } else {
         setError(response.message || "Erreur lors de l'inscription");

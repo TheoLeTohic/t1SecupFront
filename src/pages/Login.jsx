@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../api/api";
 import gsap from "gsap";
 import Button from "../components/Button";
+import Cookies from "js-cookie";
 
 function Login() {
   const { darkMode, setDarkMode } = useDarkMode();
@@ -33,7 +34,6 @@ function Login() {
     try {
       const response = await login(email, password);
       if (response.token) {
-        localStorage.setItem("token", response.token);
         navigate("/todo-app");
       } else {
         setError(response.message || "Erreur lors de la connexion");
