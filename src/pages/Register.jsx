@@ -33,7 +33,6 @@ function Register() {
     setError(null);
     try {
       const response = await register(username, password);
-      console.log("Réponse après register:", response);
 
       if (response.data) {
         navigate("/todo-app");
