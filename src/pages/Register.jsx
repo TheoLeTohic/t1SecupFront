@@ -32,8 +32,8 @@ function Register() {
     setError(null);
     try {
       const response = await register(username, password);
-      if (response.token) {
-        localStorage.setItem("token", response.token);
+      if (response.data) {
+        localStorage.setItem("token", response.data);
         navigate("/todo-app");
       } else {
         setError(response.message || "Erreur lors de l'inscription");

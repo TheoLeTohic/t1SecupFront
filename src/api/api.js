@@ -1,12 +1,15 @@
-const API_URL = "https://my-todo-backend-31f944975365.herokuapp.com/";
+const API_URL = "https://my-todo-backend-31f944975365.herokuapp.com/api";
 
 export const register = async (username, password) => {
+
   const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
-  return response.json();
+
+  const data = await response.json();
+  return data;
 };
 
 export const login = async (username, password) => {
