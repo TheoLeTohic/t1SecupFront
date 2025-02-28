@@ -57,14 +57,24 @@ function Login() {
       }}
     >
       <div style={{ position: "absolute", top: 20, left: 20 }}>
-        <Button text={darkMode ? "🌞" : "🌙"} onClick={() => setDarkMode((prev) => !prev)} />
+        <Button
+          text={darkMode ? "🌞" : "🌙"}
+          onClick={() => setDarkMode((prev) => !prev)}
+        />
       </div>
       <div style={{ position: "absolute", top: 20, right: 20 }}>
         <Button text="Accueil" onClick={() => navigate("/")} />
       </div>
       <h1 ref={titleRef}>Connexion</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <form
+        onSubmit={handleLogin}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         <input
           type="text"
           placeholder="Email"

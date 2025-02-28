@@ -29,7 +29,7 @@ function TodoApp() {
 
   useEffect(() => {
     refreshTodos();
-  }, [token]);
+  }, []);
 
   const handleAddTodo = async () => {
     if (newTodo.trim() === "") return;
@@ -44,7 +44,10 @@ function TodoApp() {
 
   const handleToggleComplete = async (id, completed) => {
     try {
-      await updateTodo(token, id, "", !completed);
+      const todo = todos.find((t) => t.id === id || t._id === id);
+      if (!todo) return;
+
+      await updateTodo(token, id, todo.title, !completed);
       refreshTodos();
     } catch (error) {
       console.error("Erreur lors de la mise à jour :", error);
@@ -160,7 +163,6 @@ function TodoApp() {
                 gap: "10px",
                 cursor: "pointer",
                 fontSize: "18px",
-                textDecoration: todo.completed ? "line-through" : "none",
                 color: todo.completed ? "#bbb" : "inherit",
               }}
             >
