@@ -3,12 +3,14 @@ import gsap from "gsap";
 import Button from "../components/Button";
 import { useDarkMode } from "../context/DarkModeContext";
 
+// Page d'accueil de l'application
 function Home() {
   const titleRef = useRef(null);
   const textRef = useRef(null);
   const gsapContext = useRef(null);
   const { darkMode, setDarkMode } = useDarkMode();
 
+  // Gestion des animations des textes avec la librairie GSAP
   useLayoutEffect(() => {
     gsapContext.current = gsap.context(() => {
       gsap.set([titleRef.current, textRef.current], { opacity: 0 });
@@ -44,12 +46,13 @@ function Home() {
       }}
     >
       <div style={{ position: "absolute", top: 20, left: 20 }}>
+        {/* Bouton pour gérer l'état du DarkMode sur la page */}
         <Button
           text={darkMode ? "🌞" : "🌙"}
           onClick={() => setDarkMode((prev) => !prev)}
         />
       </div>
-
+      {/* Bouton de redirection vers page Login ou Register */}
       <div style={{ position: "absolute", top: 20, right: 20 }}>
         <Button
           text="Se connecter / S‘inscrire"

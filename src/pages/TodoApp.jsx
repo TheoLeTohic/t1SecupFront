@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import { getTodos, createTodo, updateTodo, deleteTodo } from "../api/api";
 import Cookies from "js-cookie";
 
+// Page TodoApp, accessible une fois que l'utilisateur est authentifié
 function TodoApp() {
   const { darkMode, setDarkMode } = useDarkMode();
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ function TodoApp() {
   const listRef = useRef(null);
   const gsapContext = useRef(null);
 
+  // Permet de rafraichir l'état des todos à chaqe fois qu'un todo est créé, modifié ou supprimé
   const refreshTodos = async () => {
     const token = Cookies.get("token");
     if (!token) {
@@ -47,6 +49,7 @@ function TodoApp() {
     }
   };
 
+  // Gestion de l'état des todos
   const handleToggleComplete = async (id, completed) => {
     const token = Cookies.get("token");
     const todo = todos.find((t) => t.id === id || t._id === id);
@@ -60,6 +63,7 @@ function TodoApp() {
     }
   };
 
+  // Supprimer un Todo
   const handleDeleteTodo = async (id) => {
     const token = Cookies.get("token");
     if (!token) return;
@@ -147,6 +151,7 @@ function TodoApp() {
         <Button text="➕ Ajouter" onClick={handleAddTodo} />
       </div>
 
+      {/* Lister tous les todos de l'utilisateur */}
       <ul ref={listRef} style={{ listStyle: "none", padding: 0, width: "50%" }}>
         {todos.map((todo) => (
           <li
@@ -189,6 +194,7 @@ function TodoApp() {
                   fontWeight: "bold",
                 }}
               >
+                {/* Vérification de l'état des todos */}
                 {todo.completed ? "✔" : "⬜"}
               </span>
               {todo.title}

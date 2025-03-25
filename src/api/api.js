@@ -1,6 +1,7 @@
 import Cookies from "js-cookie";
 const API_URL = "https://my-todo-backend-31f944975365.herokuapp.com/api";
 
+// Endpoint d'inscription
 export const register = async (username, password) => {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
@@ -20,6 +21,7 @@ export const register = async (username, password) => {
   return data;
 };
 
+// Endpoint de connexion utilisateur
 export const login = async (username, password) => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
@@ -39,6 +41,7 @@ export const login = async (username, password) => {
   return data;
 };
 
+// Endpoint pour récupérer les todos d'un utilisateur
 export const getTodos = async (token) => {
   const response = await fetch(`${API_URL}/todos`, {
     method: "GET",
@@ -47,6 +50,7 @@ export const getTodos = async (token) => {
   return response.json();
 };
 
+// Endpoint pour créer un todo
 export const createTodo = async (token, title) => {
   const response = await fetch(`${API_URL}/todos`, {
     method: "POST",
@@ -59,6 +63,7 @@ export const createTodo = async (token, title) => {
   return response.json();
 };
 
+// Endpoint de modification d'un todo
 export const updateTodo = async (token, id, title, completed) => {
   const response = await fetch(`${API_URL}/todos/${id}`, {
     method: "PUT",
@@ -71,6 +76,7 @@ export const updateTodo = async (token, id, title, completed) => {
   return response.json();
 };
 
+// Endpoint pour supprimer un todo
 export const deleteTodo = async (token, id) => {
   const response = await fetch(`${API_URL}/todos/${id}`, {
     method: "DELETE",

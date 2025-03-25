@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useDarkMode } from "../context/DarkModeContext";
 
+// Composant Bouton principal de l'application, de manière générique utilisant le dark mode
 const Button = ({ text, onClick }) => {
   const buttonRef = useRef(null);
   const { darkMode } = useDarkMode();
@@ -41,6 +42,7 @@ const Button = ({ text, onClick }) => {
       onMouseEnter={() =>
         gsap.to(buttonRef.current, { scale: 1.1, duration: 0.2 })
       }
+      // Animations du bouton avec librairie GSAP
       onMouseLeave={() =>
         gsap.to(buttonRef.current, { scale: 1, duration: 0.2 })
       }

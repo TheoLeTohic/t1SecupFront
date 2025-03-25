@@ -5,6 +5,7 @@ import { register } from "../api/api";
 import gsap from "gsap";
 import Button from "../components/Button";
 
+// Page d'inscription
 function Register() {
   const { darkMode, setDarkMode } = useDarkMode();
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ function Register() {
   const titleRef = useRef(null);
   const gsapContext = useRef(null);
 
+  // Gestion des animations Gsap
   useLayoutEffect(() => {
     gsapContext.current = gsap.context(() => {
       gsap.set(titleRef.current, { opacity: 0 });
@@ -57,6 +59,7 @@ function Register() {
       }}
     >
       <div style={{ position: "absolute", top: 20, left: 20 }}>
+        {/* Bouton pour gérer le dark mode sur la page */}
         <Button
           text={darkMode ? "🌞" : "🌙"}
           onClick={() => setDarkMode((prev) => !prev)}

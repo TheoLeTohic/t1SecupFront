@@ -5,6 +5,7 @@ import { login } from "../api/api";
 import gsap from "gsap";
 import Button from "../components/Button";
 
+// Page de connexion utilisateur
 function Login() {
   const { darkMode, setDarkMode } = useDarkMode();
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ function Login() {
   const titleRef = useRef(null);
   const gsapContext = useRef(null);
 
+  // Gestion des animations avec la librairie Gsap
   useLayoutEffect(() => {
     gsapContext.current = gsap.context(() => {
       gsap.set(titleRef.current, { opacity: 0 });
@@ -56,6 +58,7 @@ function Login() {
       }}
     >
       <div style={{ position: "absolute", top: 20, left: 20 }}>
+        {/* Bouton pour toggle DarkMode */}
         <Button
           text={darkMode ? "🌞" : "🌙"}
           onClick={() => setDarkMode((prev) => !prev)}

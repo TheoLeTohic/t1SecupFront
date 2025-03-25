@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 const DarkModeContext = createContext();
 
+// Hook pour gérer le DarkMMode d'un élément, et stocker les préférences en local Storage
 export const DarkModeProvider = ({ children }) => {
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem("darkMode") === "true";

@@ -7,6 +7,7 @@ import Register from "./pages/Register.jsx";
 import TodoApp from "./pages/TodoApp.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 
+// Router de l'application, nesté avec le hook pour gérer le dark mode sur l'ensemble de l'application.
 function App() {
   return (
     <DarkModeProvider>
