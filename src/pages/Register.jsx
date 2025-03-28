@@ -35,8 +35,10 @@ function Register() {
     try {
       const response = await register(username, password);
 
-      if (response.data) {
-        navigate("/todo-app");
+      if (response.message === "User registered successfully") {
+        setTimeout(() => {
+          navigate("/todo-app");
+        }, 1000);
       } else {
         setError(response.message || "Erreur lors de l'inscription");
       }

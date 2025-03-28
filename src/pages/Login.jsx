@@ -9,7 +9,7 @@ import Button from "../components/Button";
 function Login() {
   const { darkMode, setDarkMode } = useDarkMode();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const titleRef = useRef(null);
@@ -32,9 +32,11 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
+
     try {
-      const response = await login(email, password);
-      if (response.token) {
+      const response = await login(username, password);
+      if (response.message === "Connexion réussie") {
+        sessionStorage.setItem("csrfToken", response.csrfToken); // Stocke le CSRF token
         navigate("/todo-app");
       } else {
         setError(response.message || "Erreur lors de la connexion");
@@ -79,11 +81,12 @@ function Login() {
       >
         <input
           type="text"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Nom d'utilisateur"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           style={{ margin: "10px", padding: "10px", width: "250px" }}
         />
+
         <input
           type="password"
           placeholder="Mot de passe"

@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import Button from "../components/Button";
 import { getTodos, createTodo, updateTodo, deleteTodo } from "../api/api";
-import Cookies from "js-cookie";
 
 // Page TodoApp, accessible une fois que l'utilisateur est authentifié
 function TodoApp() {
@@ -15,21 +14,22 @@ function TodoApp() {
   const titleRef = useRef(null);
   const listRef = useRef(null);
   const gsapContext = useRef(null);
+const API_URL = "https://my-todo-backend-31f944975365.herokuapp.com";
 
-  // Permet de rafraichir l'état des todos à chaqe fois qu'un todo est créé, modifié ou supprimé
+
+  // Permet de rafraîchir l'état des todos à chaque modification
   const refreshTodos = async () => {
-    const token = Cookies.get("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
     try {
-      const response = await getTodos(token);
+      const response = await getTodos();
       if (response && Array.isArray(response)) {
         setTodos(response);
+      } else {
+        // Si la requête échoue (ex: token expiré), redirige vers login
+        navigate("/login");
       }
     } catch (error) {
       console.error("Erreur lors du rafraîchissement des todos :", error);
+      navigate("/login");
     }
   };
 
@@ -37,27 +37,27 @@ function TodoApp() {
     refreshTodos();
   }, []);
 
+  // Ajouter un nouveau Todo
   const handleAddTodo = async () => {
-    const token = Cookies.get("token");
-    if (!token || newTodo.trim() === "") return;
+    if (newTodo.trim() === "") return; // Évite les entrées vides
+
     try {
-      await createTodo(token, newTodo);
-      setNewTodo("");
-      refreshTodos();
+      await createTodo(newTodo);
+      setNewTodo(""); // Réinitialise le champ
+      refreshTodos(); // Rafraîchit la liste des todos
     } catch (error) {
       console.error("Erreur lors de l'ajout :", error);
     }
   };
 
-  // Gestion de l'état des todos
+  // Gestion de l'état des todos (toggle)
   const handleToggleComplete = async (id, completed) => {
-    const token = Cookies.get("token");
     const todo = todos.find((t) => t.id === id || t._id === id);
-    if (!todo || !token) return;
+    if (!todo) return;
 
     try {
-      await updateTodo(token, id, todo.title, !completed);
-      refreshTodos();
+      await updateTodo(id, todo.title, !completed);
+      refreshTodos(); // Met à jour la liste après modification
     } catch (error) {
       console.error("Erreur lors de la mise à jour :", error);
     }
@@ -65,14 +65,46 @@ function TodoApp() {
 
   // Supprimer un Todo
   const handleDeleteTodo = async (id) => {
-    const token = Cookies.get("token");
-    if (!token) return;
-
     try {
-      await deleteTodo(token, id);
-      refreshTodos();
+      await deleteTodo(id);
+      refreshTodos(); // Rafraîchit la liste après suppression
     } catch (error) {
       console.error("Erreur lors de la suppression :", error);
+    }
+  };
+
+  // Récupérer le token CSRF avant la déconnexion
+  const getCsrfToken = async () => {
+    const response = await fetch(`${API_URL}/api/csrf-token`, {
+      credentials: "include",
+    });
+    const data = await response.json();
+    return data.csrfToken;
+  };
+
+  // Déconnexion propre
+  const handleLogout = async () => {
+    try {
+      const csrfToken = await getCsrfToken();
+
+      const response = await fetch(`${API_URL}/api/auth/logout`, {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": csrfToken, // Ajouter le token CSRF
+        },
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        navigate("/login");
+      } else {
+        console.error(
+          "❌ Erreur lors de la déconnexion :",
+          response.statusText
+        );
+      }
+    } catch (error) {
+      console.error("❌ Erreur lors de la déconnexion :", error);
     }
   };
 
@@ -122,13 +154,7 @@ function TodoApp() {
         />
       </div>
       <div style={{ position: "absolute", top: 20, right: 20 }}>
-        <Button
-          text="Se déconnecter"
-          onClick={() => {
-            Cookies.remove("token");
-            navigate("/login");
-          }}
-        />
+        <Button text="Se déconnecter" onClick={handleLogout} />
       </div>
 
       <h1 ref={titleRef}>Ma To-Do List</h1>
